@@ -4,15 +4,23 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	//http.HandleFunc("/", sayHello)
-	var port string = os.Getenv("PORT")
+	port := os.Getenv("PORT")
 
 	if port == "" {
 		log.Fatal("$PORT must be set")
 	}
+
+	router := gin.New()
+	router.Use(gin.Logger())
+	router.LoadHTMLGlob("templates/*.tmpl.html")
+	router.Static("/static", "static")
+
+	router.Run(":" + port)
 
 	// starts http classes service
 	startClassesService()
@@ -26,7 +34,7 @@ func main() {
 	// starts http Users service
 	startUsersService()
 
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		panic(err)
-	}
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.tmpl.html", nil)
+	})
 }
