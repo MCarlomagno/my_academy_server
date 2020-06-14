@@ -1,1 +1,1 @@
-web: bin/my_academy_server
+web: bin/go-getting-started
