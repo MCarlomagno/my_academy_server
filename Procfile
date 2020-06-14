@@ -1,1 +1,1 @@
-web: go run .
+web: bin/my_academy_server
