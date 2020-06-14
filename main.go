@@ -1,20 +1,18 @@
 package main
 
 import (
+	"log"
 	"net/http"
-	"strings"
+	"os"
 )
-
-func sayHello(w http.ResponseWriter, r *http.Request) {
-	message := r.URL.Path
-	message = strings.TrimPrefix(message, "/")
-	message = "Hello " + message + " with method " + r.Method
-
-	w.Write([]byte(message))
-}
 
 func main() {
 	//http.HandleFunc("/", sayHello)
+	var port string = os.Getenv("PORT")
+
+	if port == "" {
+		log.Fatal("$PORT must be set")
+	}
 
 	// starts http classes service
 	startClassesService()
@@ -28,7 +26,7 @@ func main() {
 	// starts http Users service
 	startUsersService()
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		panic(err)
 	}
 }
