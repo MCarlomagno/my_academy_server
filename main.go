@@ -24,17 +24,81 @@ func main() {
 		c.HTML(http.StatusOK, "index.tmpl.html", nil)
 	})
 
-	// starts http classes service
-	startClassesService()
+	///
+	/// START CLASSES
+	///
+	router.GET("/classes", func(c *gin.Context) {
+		c.String(http.StatusOK, "Get a classes!")
+	})
+	router.POST("/classes", func(c *gin.Context) {
+		c.String(http.StatusOK, "post a classes!")
+	})
+	router.PUT("/classes", func(c *gin.Context) {
+		c.String(http.StatusOK, "put a classes!")
+	})
+	router.DELETE("/classes", func(c *gin.Context) {
+		c.String(http.StatusOK, "delete a classes!")
+	})
+	///
+	/// FINISH CLASSES
+	///
 
-	// starts http Modules service
-	startModulesService()
+	///
+	/// START USERS
+	///
+	router.GET("/users", func(c *gin.Context) {
+		c.String(http.StatusOK, "Get a users!")
+	})
+	router.POST("/users", func(c *gin.Context) {
+		c.String(http.StatusOK, "post a users!")
+	})
+	router.PUT("/users", func(c *gin.Context) {
+		c.String(http.StatusOK, "put a users!")
+	})
+	router.DELETE("/users", func(c *gin.Context) {
+		c.String(http.StatusOK, "delete a users!")
+	})
+	///
+	/// FINISH USERS
+	///
 
-	// starts http Courses service
-	startCoursesService()
+	///
+	/// START MODULES
+	///
+	router.GET("/modules", func(c *gin.Context) {
+		c.String(http.StatusOK, "Get a modules!")
+	})
+	router.POST("/modules", func(c *gin.Context) {
+		c.String(http.StatusOK, "post a modules!")
+	})
+	router.PUT("/modules", func(c *gin.Context) {
+		c.String(http.StatusOK, "put a modules!")
+	})
+	router.DELETE("/modules", func(c *gin.Context) {
+		c.String(http.StatusOK, "delete a modules!")
+	})
+	///
+	/// FINISH MODULES
+	///
 
-	// starts http Users service
-	startUsersService()
+	///
+	/// START COURSES
+	///
+	router.GET("/courses", func(c *gin.Context) {
+		c.String(http.StatusOK, "Get a courses!")
+	})
+	router.POST("/courses", func(c *gin.Context) {
+		c.String(http.StatusOK, "post a courses!")
+	})
+	router.PUT("/courses", func(c *gin.Context) {
+		c.String(http.StatusOK, "put a courses!")
+	})
+	router.DELETE("/courses", func(c *gin.Context) {
+		c.String(http.StatusOK, "delete a courses!")
+	})
+	///
+	/// FINISH COURSES
+	///
 
 	router.Run(":" + port)
 }

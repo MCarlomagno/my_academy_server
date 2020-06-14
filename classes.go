@@ -24,6 +24,5 @@ func getClassesFunction(w http.ResponseWriter, r *http.Request) {
 }
 
 func startClassesService() {
-	fmt.Println("Print en consola desde classes")
-	http.HandleFunc("/classes", getClassesFunction)
+
 }
