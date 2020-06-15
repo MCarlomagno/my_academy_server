@@ -7,7 +7,7 @@ require (
 	github.com/dchest/safefile v0.0.0-20151022103144-855e8d98f185 // indirect
 	github.com/gin-gonic/gin v0.0.0-20150626140855-4cc2de6207f4
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
-	github.com/heroku/x v0.0.0-20171004170240-705849e307dd
+	github.com/heroku/x v0.0.0-20171004170240-705849e307dd // indirect
 	github.com/kardianos/govendor v1.0.9 // indirect
 	github.com/lib/pq v1.7.0
 	github.com/manucorporat/sse v0.0.0-20150604091100-c142f0f1baea // indirect
