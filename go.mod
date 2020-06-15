@@ -1,4 +1,4 @@
-module github.com/heroku/go-getting-started
+module github.com/heroku/my_academy_server
 
 go 1.12
 
