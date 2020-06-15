@@ -90,11 +90,9 @@ func main() {
 	router.GET("/courses", func(c *gin.Context) {
 		c.String(http.StatusOK, "Get a courses!")
 
-		fmt.Println("1")
 		//we open the database
 		db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 
-		fmt.Println("2")
 		err = db.Ping()
 		if err != nil {
 			panic(err)
@@ -103,14 +101,15 @@ func main() {
 		//creating the statement
 		sqlStatement := `SELECT id, title FROM courses WHERE id=$1;`
 
-		fmt.Println("3")
 		// creating variables to take result
 		var title string
 		var id int
 
-		fmt.Println("4")
 		//Querying
 		row := db.QueryRow(sqlStatement, 1)
+
+		//closing connection
+		defer db.Close()
 
 		// scaning result
 		switch err := row.Scan(&id, &title); err {
@@ -122,28 +121,21 @@ func main() {
 			panic(err)
 		}
 
-		fmt.Println("5")
-
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		fmt.Println("6")
 		var msg struct {
 			Ttile string
 			Id    int
 		}
 
-		fmt.Println("7")
 		msg.Ttile = title
 		msg.Id = id
 
-		fmt.Println("8")
 		// response
 		c.JSON(http.StatusOK, msg)
 
-		//closing connection
-		defer db.Close()
 	})
 	router.POST("/courses", func(c *gin.Context) {
 		c.String(http.StatusOK, "post a courses!")
