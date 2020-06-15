@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -89,16 +90,25 @@ func main() {
 	router.GET("/courses", func(c *gin.Context) {
 		c.String(http.StatusOK, "Get a courses!")
 
+		fmt.Println("1")
 		//we open the database
 		db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 
-		//creating the statement
-		sqlStatement := `SELECT id, title FROM courses WHERE id=$1;`
+		fmt.Println("2")
+		err = db.Ping()
+		if err != nil {
+			panic(err)
+		}
 
+		//creating the statement
+		sqlStatement := "SELECT id, title FROM courses WHERE id=%d;"
+
+		fmt.Println("3")
 		// creating variables to take result
 		var title string
 		var id int
 
+		fmt.Println("4")
 		//Querying
 		row := db.QueryRow(sqlStatement, 1)
 
@@ -112,18 +122,23 @@ func main() {
 			panic(err)
 		}
 
+		fmt.Println("5")
+
 		if err != nil {
 			log.Fatal(err)
 		}
 
+		fmt.Println("6")
 		var msg struct {
 			Ttile string
 			Id    int
 		}
 
+		fmt.Println("7")
 		msg.Ttile = title
 		msg.Id = id
 
+		fmt.Println("8")
 		// response
 		c.JSON(http.StatusOK, msg)
 
