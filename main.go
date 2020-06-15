@@ -115,7 +115,6 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer db.Close()
 
 		var msg struct {
 			Ttile string
@@ -127,6 +126,9 @@ func main() {
 
 		// response
 		c.JSON(http.StatusOK, msg)
+
+		//closing connection
+		defer db.Close()
 	})
 	router.POST("/courses", func(c *gin.Context) {
 		c.String(http.StatusOK, "post a courses!")
