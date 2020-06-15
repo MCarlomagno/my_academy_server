@@ -101,7 +101,7 @@ func main() {
 		}
 
 		//creating the statement
-		sqlStatement := "SELECT id, title FROM courses WHERE id=%d;"
+		sqlStatement := `SELECT id, title FROM courses WHERE id=$1;`
 
 		fmt.Println("3")
 		// creating variables to take result
