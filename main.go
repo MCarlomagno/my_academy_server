@@ -1,13 +1,14 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/heroku/go-getting-started/classes"
+	"github.com/heroku/go-getting-started/courses"
+	"github.com/heroku/go-getting-started/modules"
+	"github.com/heroku/go-getting-started/users"
 	_ "github.com/lib/pq"
 )
 
@@ -23,25 +24,13 @@ func main() {
 	router.LoadHTMLGlob("templates/*.tmpl.html")
 	router.Static("/static", "static")
 
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.tmpl.html", nil)
-	})
-
 	///
 	/// START CLASSES
 	///
-	router.GET("/classes", func(c *gin.Context) {
-		c.String(http.StatusOK, "Get a classes!")
-	})
-	router.POST("/classes", func(c *gin.Context) {
-		c.String(http.StatusOK, "post a classes!")
-	})
-	router.PUT("/classes", func(c *gin.Context) {
-		c.String(http.StatusOK, "put a classes!")
-	})
-	router.DELETE("/classes", func(c *gin.Context) {
-		c.String(http.StatusOK, "delete a classes!")
-	})
+	router.GET("/classes", classes.GetClassesRoot)
+	router.POST("/classes", classes.PostClassesRoot)
+	router.PUT("/classes", classes.PutClassesRoot)
+	router.DELETE("/classes", classes.DeleteClassesRoot)
 	///
 	/// FINISH CLASSES
 	///
@@ -49,18 +38,10 @@ func main() {
 	///
 	/// START USERS
 	///
-	router.GET("/users", func(c *gin.Context) {
-		c.String(http.StatusOK, "Get a users!")
-	})
-	router.POST("/users", func(c *gin.Context) {
-		c.String(http.StatusOK, "post a users!")
-	})
-	router.PUT("/users", func(c *gin.Context) {
-		c.String(http.StatusOK, "put a users!")
-	})
-	router.DELETE("/users", func(c *gin.Context) {
-		c.String(http.StatusOK, "delete a users!")
-	})
+	router.GET("/users", users.GetUsersRoot)
+	router.POST("/users", users.PostUsersRoot)
+	router.PUT("/users", users.PutUsersRoot)
+	router.DELETE("/users", users.DeleteUsersRoot)
 	///
 	/// FINISH USERS
 	///
@@ -68,18 +49,10 @@ func main() {
 	///
 	/// START MODULES
 	///
-	router.GET("/modules", func(c *gin.Context) {
-		c.String(http.StatusOK, "Get a modules!")
-	})
-	router.POST("/modules", func(c *gin.Context) {
-		c.String(http.StatusOK, "post a modules!")
-	})
-	router.PUT("/modules", func(c *gin.Context) {
-		c.String(http.StatusOK, "put a modules!")
-	})
-	router.DELETE("/modules", func(c *gin.Context) {
-		c.String(http.StatusOK, "delete a modules!")
-	})
+	router.GET("/modules", modules.GetModulesRoot)
+	router.POST("/modules", modules.PostModulesRoot)
+	router.PUT("/modules", modules.PutModulesRoot)
+	router.DELETE("/modules", modules.DeleteModulesRoot)
 	///
 	/// FINISH MODULES
 	///
@@ -87,65 +60,10 @@ func main() {
 	///
 	/// START COURSES
 	///
-	router.GET("/courses", func(c *gin.Context) {
-		c.String(http.StatusOK, "Get a courses!")
-
-		//we open the database
-		db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-
-		err = db.Ping()
-		if err != nil {
-			panic(err)
-		}
-
-		//creating the statement
-		sqlStatement := `SELECT id, title FROM courses WHERE id=$1;`
-
-		// creating variables to take result
-		var title string
-		var id int
-
-		//Querying
-		row := db.QueryRow(sqlStatement, 1)
-
-		//closing connection
-		defer db.Close()
-
-		// scaning result
-		switch err := row.Scan(&id, &title); err {
-		case sql.ErrNoRows:
-			fmt.Println("No rows were returned!")
-		case nil:
-			fmt.Println(id, title)
-		default:
-			panic(err)
-		}
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		var msg struct {
-			Ttile string
-			Id    int
-		}
-
-		msg.Ttile = title
-		msg.Id = id
-
-		// response
-		c.JSON(http.StatusOK, msg)
-
-	})
-	router.POST("/courses", func(c *gin.Context) {
-		c.String(http.StatusOK, "post a courses!")
-	})
-	router.PUT("/courses", func(c *gin.Context) {
-		c.String(http.StatusOK, "put a courses!")
-	})
-	router.DELETE("/courses", func(c *gin.Context) {
-		c.String(http.StatusOK, "delete a courses!")
-	})
+	router.GET("/courses", courses.GetCoursesRoot)
+	router.POST("/courses", courses.PostCoursesRoot)
+	router.PUT("/courses", courses.PutCoursesRoot)
+	router.DELETE("/courses", courses.DeleteCoursesRoot)
 	///
 	/// FINISH COURSES
 	///
