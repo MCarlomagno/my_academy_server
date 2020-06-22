@@ -9,6 +9,7 @@ require (
 	github.com/mattn/go-colorable v0.0.0-20150625154642-40e4aedc8fab // indirect
 	github.com/mattn/go-isatty v0.0.0-20150814002629-7fcbc72f853b // indirect
 	github.com/stretchr/testify v1.3.0 // indirect
+	github.com/t3rm1n4l/go-mega v0.0.0-20200416171014-ffad7fcb44b8
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
 	gopkg.in/bluesuncorp/validator.v5 v5.9.1 // indirect
 )

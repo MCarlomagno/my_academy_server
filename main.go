@@ -8,6 +8,7 @@ import (
 	"github.com/heroku/go-getting-started/classes"
 	"github.com/heroku/go-getting-started/courses"
 	"github.com/heroku/go-getting-started/modules"
+	"github.com/heroku/go-getting-started/storage"
 	"github.com/heroku/go-getting-started/users"
 	_ "github.com/lib/pq"
 )
@@ -18,6 +19,7 @@ func main() {
 	if port == "" {
 		log.Fatal("$PORT must be set")
 	}
+	storage.StartStorage()
 
 	router := gin.New()
 	router.Use(gin.Logger())
