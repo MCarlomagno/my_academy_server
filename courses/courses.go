@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetCoursesRoot function
 func GetCoursesRoot(c *gin.Context) {
 	c.String(http.StatusOK, "Get a courses!")
 
@@ -50,25 +51,72 @@ func GetCoursesRoot(c *gin.Context) {
 
 	var msg struct {
 		Title string
-		Id    int
+		ID    int
 	}
 
 	msg.Title = title
-	msg.Id = id
+	msg.ID = id
 
 	// response
 	c.JSON(http.StatusOK, msg)
 
 }
 
+// PostCoursesRoot function
 func PostCoursesRoot(c *gin.Context) {
-	c.String(http.StatusOK, "Post a courses!")
+	//we open the database
+	db, errA := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	if errA != nil {
+		fmt.Println("error opening db")
+	}
+
+	//decoding body
+	var bodyCourse Course
+
+	errB := c.BindJSON(&bodyCourse)
+	if errB != nil {
+		fmt.Println("error binding body")
+	}
+
+	//creating the statement
+	sqlStatement := `INSERT INTO courses (id, id_user, title, description)
+		VALUES ($1, $2, $3, $4);`
+
+	// TODO autoincremental
+	var newID = 5
+
+	//Querying
+	result, errC := db.Exec(sqlStatement, newID, bodyCourse.OwnerUserID, bodyCourse.Title, bodyCourse.Description)
+	if errC != nil {
+		fmt.Println("error ejecutando query")
+		fmt.Printf(errC.Error())
+	} else {
+		fmt.Print(result)
+	}
+
+	bodyCourse.ID = newID
+
+	fmt.Println("Termino de ejecutar la funcion")
+
+	//closing connection
+	defer db.Close()
+	c.JSON(http.StatusOK, bodyCourse)
 }
 
+// PutCoursesRoot function
 func PutCoursesRoot(c *gin.Context) {
 	c.String(http.StatusOK, "put a courses!")
 }
 
+// DeleteCoursesRoot function
 func DeleteCoursesRoot(c *gin.Context) {
 	c.String(http.StatusOK, "delete a courses!")
+}
+
+// Course model
+type Course struct {
+	ID          int    `json:"id"`
+	OwnerUserID int    `json:"ownerUserId"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 }
