@@ -79,24 +79,19 @@ func PostCoursesRoot(c *gin.Context) {
 	}
 
 	//creating the statement
-	sqlStatement := `INSERT INTO courses (id, id_user, title, description)
-		VALUES ($1, $2, $3, $4);`
+	sqlStatement := `INSERT INTO courses (id_user, title, description)
+		VALUES ($1, $2, $3) RETURNING id;`
 
 	// TODO autoincremental
-	var newID = 5
+	var newID = 0
 
 	//Querying
-	result, errC := db.Exec(sqlStatement, newID, bodyCourse.OwnerUserID, bodyCourse.Title, bodyCourse.Description)
+	errC := db.QueryRow(sqlStatement, bodyCourse.OwnerUserID, bodyCourse.Title, bodyCourse.Description).Scan(&newID)
 	if errC != nil {
-		fmt.Println("error ejecutando query")
-		fmt.Printf(errC.Error())
-	} else {
-		fmt.Print(result)
+		fmt.Println(errC.Error())
 	}
 
 	bodyCourse.ID = newID
-
-	fmt.Println("Termino de ejecutar la funcion")
 
 	//closing connection
 	defer db.Close()
