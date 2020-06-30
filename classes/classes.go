@@ -14,6 +14,51 @@ func GetClassesRoot(c *gin.Context) {
 	c.String(http.StatusOK, "Get a classes!")
 }
 
+// GetClassesByModuleID function
+func GetClassesByModuleID(c *gin.Context) {
+	//we open the database
+	db, errA := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	if errA != nil {
+		fmt.Println("error opening db")
+	}
+	//closing connection
+	defer db.Close()
+
+	//creating the statement
+	sqlStatement := `SELECT id, id_module, title, description, video_url FROM classes WHERE id_module=$1;`
+
+	//Querying
+	rows, errB := db.Query(sqlStatement, c.Param("moduleId"))
+	if errB != nil {
+		// handle this error better than this
+		fmt.Println("error opening rows")
+	}
+	defer rows.Close()
+
+	classes := make([]*Class, 0)
+
+	for rows.Next() {
+		var id int
+		var title string
+		var moduleID int
+		var description string
+		var videoURL string
+		class := new(Class)
+		errC := rows.Scan(&id, &moduleID, &title, &description, &videoURL)
+		if errC != nil {
+			fmt.Println(errC)
+		}
+		class.ID = id
+		class.ModuleID = moduleID
+		class.Title = title
+		class.Description = description
+		class.VideoURL = videoURL
+		classes = append(classes, class)
+	}
+	// response
+	c.JSON(http.StatusOK, classes)
+}
+
 // PostClassesRoot function
 func PostClassesRoot(c *gin.Context) {
 	//we open the database
