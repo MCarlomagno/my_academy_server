@@ -28,6 +28,7 @@ func main() {
 	/// START CLASSES
 	///
 	router.GET("/classes", classes.GetClassesRoot)
+	router.GET("/classes/getClassesByModuleId/:moduleId", classes.GetClassesByModuleID)
 	router.POST("/classes", classes.PostClassesRoot)
 	router.PUT("/classes", classes.PutClassesRoot)
 	router.DELETE("/classes", classes.DeleteClassesRoot)
