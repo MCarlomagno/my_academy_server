@@ -61,6 +61,7 @@ func main() {
 	/// START COURSES
 	///
 	router.GET("/courses", courses.GetCoursesRoot)
+	router.GET("/courses/getUserCreatedCourses/:ownerUserId", courses.GetUserCreatedCourses)
 	router.POST("/courses", courses.PostCoursesRoot)
 	router.PUT("/courses", courses.PutCoursesRoot)
 	router.DELETE("/courses", courses.DeleteCoursesRoot)
