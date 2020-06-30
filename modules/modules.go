@@ -50,6 +50,49 @@ func PostModulesRoot(c *gin.Context) {
 	c.JSON(http.StatusOK, bodyModule)
 }
 
+// GetModulesByCourseID function
+func GetModulesByCourseID(c *gin.Context) {
+	//we open the database
+	db, errA := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	if errA != nil {
+		fmt.Println("error opening db")
+	}
+	//closing connection
+	defer db.Close()
+
+	//creating the statement
+	sqlStatement := `SELECT id, id_course, title, description FROM modules WHERE id_course=$1;`
+
+	//Querying
+	rows, errB := db.Query(sqlStatement, c.Param("courseId"))
+	if errB != nil {
+		// handle this error better than this
+		fmt.Println("error opening rows")
+	}
+	defer rows.Close()
+
+	modules := make([]*Module, 0)
+
+	for rows.Next() {
+		var id int
+		var title string
+		var courseID int
+		var description string
+		module := new(Module)
+		errC := rows.Scan(&id, &courseID, &title, &description)
+		if errC != nil {
+			fmt.Println(errC)
+		}
+		module.ID = id
+		module.CourseID = courseID
+		module.Title = title
+		module.Description = description
+		modules = append(modules, module)
+	}
+	// response
+	c.JSON(http.StatusOK, modules)
+}
+
 // PutModulesRoot function
 func PutModulesRoot(c *gin.Context) {
 	c.String(http.StatusOK, "put a modules!")

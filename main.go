@@ -50,6 +50,7 @@ func main() {
 	/// START MODULES
 	///
 	router.GET("/modules", modules.GetModulesRoot)
+	router.GET("/modules/getModulesByCourseId/:courseId", modules.GetModulesByCourseID)
 	router.POST("/modules", modules.PostModulesRoot)
 	router.PUT("/modules", modules.PutModulesRoot)
 	router.DELETE("/modules", modules.DeleteModulesRoot)
