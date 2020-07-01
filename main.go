@@ -63,6 +63,7 @@ func main() {
 	/// START COURSES
 	///
 	router.GET("/courses", courses.GetCoursesRoot)
+	router.GET("/courses/getAllCourses", courses.GetAllCourses)
 	router.GET("/courses/getUserCreatedCourses/:ownerUserId", courses.GetUserCreatedCourses)
 	router.GET("/courses/getEnrollmentsByUserId/:userId", courses.GetEnrollmentsByUserID)
 	router.POST("/courses", courses.PostCoursesRoot)
