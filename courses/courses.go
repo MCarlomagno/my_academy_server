@@ -57,6 +57,7 @@ func GetUserCreatedCourses(c *gin.Context) {
 	c.JSON(http.StatusOK, courses)
 }
 
+// GetEnrollmentsByUserID function
 func GetEnrollmentsByUserID(c *gin.Context) {
 	//we open the database
 	db, errA := sql.Open("postgres", os.Getenv("DATABASE_URL"))
@@ -73,6 +74,49 @@ func GetEnrollmentsByUserID(c *gin.Context) {
 
 	//Querying
 	rows, errB := db.Query(sqlStatement, c.Param("userId"))
+	if errB != nil {
+		// handle this error better than this
+		fmt.Println("error opening rows")
+	}
+	defer rows.Close()
+
+	courses := make([]*Course, 0)
+
+	for rows.Next() {
+		var id int
+		var title string
+		var ownerUserID int
+		var description string
+		course := new(Course)
+		errC := rows.Scan(&id, &ownerUserID, &title, &description)
+		if errC != nil {
+			fmt.Println(errC)
+		}
+		course.ID = id
+		course.OwnerUserID = ownerUserID
+		course.Title = title
+		course.Description = description
+		courses = append(courses, course)
+	}
+	// response
+	c.JSON(http.StatusOK, courses)
+}
+
+// GetAllCourses function
+func GetAllCourses(c *gin.Context) {
+	//we open the database
+	db, errA := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	if errA != nil {
+		fmt.Println("error opening db")
+	}
+	//closing connection
+	defer db.Close()
+
+	//creating the statement
+	sqlStatement := `SELECT id, id_user, title, description FROM courses`
+
+	//Querying
+	rows, errB := db.Query(sqlStatement)
 	if errB != nil {
 		// handle this error better than this
 		fmt.Println("error opening rows")
