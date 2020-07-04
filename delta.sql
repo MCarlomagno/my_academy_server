@@ -49,3 +49,7 @@ CREATE TABLE enrollment (
 );
 CREATE SEQUENCE enrollment_id_seq START WITH 1;
 ALTER TABLE enrollment ALTER COLUMN id SET DEFAULT nextval('enrollment_id_seq');
+
+
+ALTER TABLE courses ADD COLUMN thumbnail_image VARCHAR(255);
+ALTER TABLE classes ADD COLUMN thumbnail_image VARCHAR(255);
