@@ -25,7 +25,7 @@ func GetUserCreatedCourses(c *gin.Context) {
 	defer db.Close()
 
 	//creating the statement
-	sqlStatement := `SELECT id, id_user, title, description FROM courses WHERE id_user=$1;`
+	sqlStatement := `SELECT id, id_user, title, description, thumbnail_image FROM courses WHERE id_user=$1;`
 
 	//Querying
 	rows, errB := db.Query(sqlStatement, c.Param("ownerUserId"))
@@ -42,8 +42,9 @@ func GetUserCreatedCourses(c *gin.Context) {
 		var title string
 		var ownerUserID int
 		var description string
+		var thumbnailImage string
 		course := new(Course)
-		errC := rows.Scan(&id, &ownerUserID, &title, &description)
+		errC := rows.Scan(&id, &ownerUserID, &title, &description, &thumbnailImage)
 		if errC != nil {
 			fmt.Println(errC)
 		}
@@ -51,6 +52,7 @@ func GetUserCreatedCourses(c *gin.Context) {
 		course.OwnerUserID = ownerUserID
 		course.Title = title
 		course.Description = description
+		course.ThumbnailImage = thumbnailImage
 		courses = append(courses, course)
 	}
 	// response
@@ -68,7 +70,7 @@ func GetEnrollmentsByUserID(c *gin.Context) {
 	defer db.Close()
 
 	//creating the statement
-	sqlStatement := `SELECT c.id, c.id_user, c.title, c.description 
+	sqlStatement := `SELECT c.id, c.id_user, c.title, c.description, c.thumbnail_image
 					FROM courses c INNER JOIN enrollment e ON e.id_course = c.id 
 					WHERE e.id_user=$1;`
 
@@ -87,8 +89,9 @@ func GetEnrollmentsByUserID(c *gin.Context) {
 		var title string
 		var ownerUserID int
 		var description string
+		var thumbnailImage string
 		course := new(Course)
-		errC := rows.Scan(&id, &ownerUserID, &title, &description)
+		errC := rows.Scan(&id, &ownerUserID, &title, &description, &thumbnailImage)
 		if errC != nil {
 			fmt.Println(errC)
 		}
@@ -96,6 +99,7 @@ func GetEnrollmentsByUserID(c *gin.Context) {
 		course.OwnerUserID = ownerUserID
 		course.Title = title
 		course.Description = description
+		course.ThumbnailImage = thumbnailImage
 		courses = append(courses, course)
 	}
 	// response
@@ -113,7 +117,7 @@ func GetAllCourses(c *gin.Context) {
 	defer db.Close()
 
 	//creating the statement
-	sqlStatement := `SELECT id, id_user, title, description FROM courses`
+	sqlStatement := `SELECT id, id_user, title, description, thumbnail_image FROM courses`
 
 	//Querying
 	rows, errB := db.Query(sqlStatement)
@@ -130,8 +134,9 @@ func GetAllCourses(c *gin.Context) {
 		var title string
 		var ownerUserID int
 		var description string
+		var thumbnailImage string
 		course := new(Course)
-		errC := rows.Scan(&id, &ownerUserID, &title, &description)
+		errC := rows.Scan(&id, &ownerUserID, &title, &description, &thumbnailImage)
 		if errC != nil {
 			fmt.Println(errC)
 		}
@@ -139,6 +144,7 @@ func GetAllCourses(c *gin.Context) {
 		course.OwnerUserID = ownerUserID
 		course.Title = title
 		course.Description = description
+		course.ThumbnailImage = thumbnailImage
 		courses = append(courses, course)
 	}
 	// response
@@ -162,14 +168,14 @@ func PostCoursesRoot(c *gin.Context) {
 	}
 
 	//creating the statement
-	sqlStatement := `INSERT INTO courses (id_user, title, description)
-		VALUES ($1, $2, $3) RETURNING id;`
+	sqlStatement := `INSERT INTO courses (id_user, title, description, thumbnail_image)
+		VALUES ($1, $2, $3, $4) RETURNING id;`
 
 	// TODO autoincremental
 	var newID = 0
 
 	//Querying
-	errC := db.QueryRow(sqlStatement, bodyCourse.OwnerUserID, bodyCourse.Title, bodyCourse.Description).Scan(&newID)
+	errC := db.QueryRow(sqlStatement, bodyCourse.OwnerUserID, bodyCourse.Title, bodyCourse.Description, bodyCourse.ThumbnailImage).Scan(&newID)
 	if errC != nil {
 		fmt.Println(errC.Error())
 	}
@@ -193,8 +199,9 @@ func DeleteCoursesRoot(c *gin.Context) {
 
 // Course model
 type Course struct {
-	ID          int    `json:"id"`
-	OwnerUserID int    `json:"ownerUserId"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	ID             int    `json:"id"`
+	OwnerUserID    int    `json:"ownerUserId"`
+	Title          string `json:"title"`
+	Description    string `json:"description"`
+	ThumbnailImage string `json:"thumbnailImage"`
 }

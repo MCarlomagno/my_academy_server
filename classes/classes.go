@@ -25,7 +25,7 @@ func GetClassesByModuleID(c *gin.Context) {
 	defer db.Close()
 
 	//creating the statement
-	sqlStatement := `SELECT id, id_module, title, description, video_url FROM classes WHERE id_module=$1;`
+	sqlStatement := `SELECT id, id_module, title, description, video_url, thumbnail_image FROM classes WHERE id_module=$1;`
 
 	//Querying
 	rows, errB := db.Query(sqlStatement, c.Param("moduleId"))
@@ -43,8 +43,9 @@ func GetClassesByModuleID(c *gin.Context) {
 		var moduleID int
 		var description string
 		var videoURL string
+		var thumbnailImage string
 		class := new(Class)
-		errC := rows.Scan(&id, &moduleID, &title, &description, &videoURL)
+		errC := rows.Scan(&id, &moduleID, &title, &description, &videoURL, &thumbnailImage)
 		if errC != nil {
 			fmt.Println(errC)
 		}
@@ -53,6 +54,7 @@ func GetClassesByModuleID(c *gin.Context) {
 		class.Title = title
 		class.Description = description
 		class.VideoURL = videoURL
+		class.ThumbnailImage = thumbnailImage
 		classes = append(classes, class)
 	}
 	// response
@@ -76,14 +78,14 @@ func PostClassesRoot(c *gin.Context) {
 	}
 
 	//creating the statement
-	sqlStatement := `INSERT INTO classes (id_module, title, description, video_url)
-				VALUES ($1, $2, $3, $4) RETURNING id;`
+	sqlStatement := `INSERT INTO classes (id_module, title, description, video_url, thumbnail_image)
+				VALUES ($1, $2, $3, $4, $5) RETURNING id;`
 
 	// TODO autoincremental
 	var newID = 0
 
 	//Querying
-	errC := db.QueryRow(sqlStatement, bodyClass.ModuleID, bodyClass.Title, bodyClass.Description, bodyClass.VideoURL).Scan(&newID)
+	errC := db.QueryRow(sqlStatement, bodyClass.ModuleID, bodyClass.Title, bodyClass.Description, bodyClass.VideoURL, bodyClass.ThumbnailImage).Scan(&newID)
 	if errC != nil {
 		fmt.Println(errC.Error())
 	}
@@ -107,9 +109,10 @@ func DeleteClassesRoot(c *gin.Context) {
 
 // Class model
 type Class struct {
-	ID          int    `json:"id"`
-	ModuleID    int    `json:"moduleId"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	VideoURL    string `json:"videoUrl"`
+	ID             int    `json:"id"`
+	ModuleID       int    `json:"moduleId"`
+	Title          string `json:"title"`
+	Description    string `json:"description"`
+	VideoURL       string `json:"videoUrl"`
+	ThumbnailImage string `json:"thumbnailImage"`
 }
