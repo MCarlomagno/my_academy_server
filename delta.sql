@@ -53,3 +53,11 @@ ALTER TABLE enrollment ALTER COLUMN id SET DEFAULT nextval('enrollment_id_seq');
 
 ALTER TABLE courses ADD COLUMN thumbnail_image VARCHAR(255);
 ALTER TABLE classes ADD COLUMN thumbnail_image VARCHAR(255);
+
+ALTER TABLE users ADD email VARCHAR(255);
+
+ALTER TABLE users ADD name VARCHAR(255);
+
+ALTER TABLE users ADD surname VARCHAR(255);
+
+ALTER TABLE users ADD image_url VARCHAR(255);
