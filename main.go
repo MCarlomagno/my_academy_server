@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/heroku/go-getting-started/classes"
 	"github.com/heroku/go-getting-started/courses"
+	"github.com/heroku/go-getting-started/enrollments"
 	"github.com/heroku/go-getting-started/modules"
 	"github.com/heroku/go-getting-started/users"
 	_ "github.com/lib/pq"
@@ -71,6 +72,17 @@ func main() {
 	router.DELETE("/courses", courses.DeleteCoursesRoot)
 	///
 	/// FINISH COURSES
+	///
+
+	///
+	/// START ENROLLMENTS
+	///
+	router.GET("/enrollments", enrollments.GetEnrollmentsRoot)
+	router.POST("/enrollments", enrollments.PostEnrollmentsRoot)
+	router.PUT("/enrollments", enrollments.PutEnrollmentsRoot)
+	router.DELETE("/enrollments", enrollments.DeleteEnrollmentsRoot)
+	///
+	/// FINISH ENROLLMENTS
 	///
 
 	router.Run(":" + port)
