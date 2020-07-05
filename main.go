@@ -40,7 +40,7 @@ func main() {
 	///
 	/// START USERS
 	///
-	router.GET("/users", users.GetUsersRoot)
+	router.GET("/users/:userId", users.GetUsersRoot)
 	router.POST("/users", users.PostUsersRoot)
 	router.PUT("/users", users.PutUsersRoot)
 	router.DELETE("/users", users.DeleteUsersRoot)
