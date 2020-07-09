@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -48,6 +49,84 @@ func GetUsersRoot(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+// Login function
+func Login(c *gin.Context) {
+	//we open the database
+	db, errA := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	if errA != nil {
+		fmt.Println("error opening db")
+	}
+	//closing connection
+	defer db.Close()
+
+	//select user by email
+	emailSQLStatement := `SELECT id, email, name, surname, image_url, password FROM users WHERE email = $1;`
+
+	//decoding body
+	var bodyUser User
+
+	errB := c.BindJSON(&bodyUser)
+	if errB != nil {
+		fmt.Println("error binding body")
+	}
+
+	//Querying
+	rows, errC := db.Query(emailSQLStatement, bodyUser.Email)
+	if errC != nil {
+		fmt.Println("error querying email")
+	}
+
+	emailResult := rows.Next()
+	if !emailResult {
+		responseInvalidEail := Response{Message: "invalid email"}
+		c.JSON(http.StatusNotFound, responseInvalidEail)
+		return
+	}
+	fmt.Println("En next despues de email: " + strconv.FormatBool(emailResult))
+
+	var user User
+
+	errD := rows.Scan(&user.ID, &user.Email, &user.Name, &user.Surname, &user.ImageURL, &user.Password)
+	if errD != nil {
+		fmt.Println(errD)
+	}
+
+	//select user by password
+	passSQLStatement := `SELECT id FROM users WHERE password = crypt($1, password) AND id = $2;`
+
+	//Querying
+	rows, errF := db.Query(passSQLStatement, bodyUser.Password, user.ID)
+	if errF != nil {
+		fmt.Println("error querying pass")
+	}
+
+	passResult := rows.Next()
+	if !passResult {
+		responseInvalidPass := Response{Message: "invalid password"}
+		c.JSON(http.StatusForbidden, responseInvalidPass)
+		return
+	}
+	fmt.Println("En next despues de pass: " + strconv.FormatBool(passResult))
+
+	errH := rows.Scan(&user.ID)
+	if errH != nil {
+		fmt.Println(errD)
+	}
+	user.Password = ""
+	c.JSON(http.StatusOK, user)
+
+	// const queryResultUser = await pool.query("SELECT id, nombre, email, password FROM users WHERE email = $1", [email]);
+	// if(queryResultUser.rowCount === 0) {
+	//     return res.status(401).json({message: "El usuario no existe"});
+	// }
+	// const userId = queryResultUser.rows[0].id;
+	// const queryResultPassword = await pool.query("SELECT id FROM users WHERE password = crypt($1, password) AND id = $2;", [password, userId]);
+	// if(queryResultPassword.rowCount === 0) {
+	//     return res.status(401).json({message: "Contrasena incorrecta"});
+	// }
+	// c.String(http.StatusOK, "logged in")
+}
+
 // PostUsersRoot function
 func PostUsersRoot(c *gin.Context) {
 	c.String(http.StatusOK, "Post a users!")
@@ -70,4 +149,11 @@ type User struct {
 	Surname  string `json:"surname"`
 	Email    string `json:"email"`
 	ImageURL string `json:"imageUrl"`
+	Password string `json:"password"`
+}
+
+// Response model
+type Response struct {
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
 }

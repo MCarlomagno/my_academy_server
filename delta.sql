@@ -61,3 +61,21 @@ ALTER TABLE users ADD name VARCHAR(255);
 ALTER TABLE users ADD surname VARCHAR(255);
 
 ALTER TABLE users ADD image_url VARCHAR(255);
+
+
+CREATE EXTENSION pgcrypto;
+
+ALTER TABLE users ADD COLUMN password TEXT;
+
+/* SAMPLE QUERIES */
+INSERT INTO users (nombre, email, password) VALUES (
+    'Jon',
+  'jon@doe.com',
+  crypt('jon', gen_salt('bf'))
+);
+
+SELECT id FROM users WHERE email = 'jon@doe.com' AND password = crypt('jon', password);
+/* SAMPLE QUERIES */
+
+ALTER TABLE users ALTER COLUMN password SET NOT NULL;
+

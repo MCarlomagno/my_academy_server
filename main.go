@@ -44,6 +44,7 @@ func main() {
 	router.POST("/users", users.PostUsersRoot)
 	router.PUT("/users", users.PutUsersRoot)
 	router.DELETE("/users", users.DeleteUsersRoot)
+	router.POST("/users/login", users.Login)
 	///
 	/// FINISH USERS
 	///
