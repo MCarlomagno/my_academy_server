@@ -114,17 +114,42 @@ func Login(c *gin.Context) {
 	}
 	user.Password = ""
 	c.JSON(http.StatusOK, user)
+}
 
-	// const queryResultUser = await pool.query("SELECT id, nombre, email, password FROM users WHERE email = $1", [email]);
-	// if(queryResultUser.rowCount === 0) {
-	//     return res.status(401).json({message: "El usuario no existe"});
-	// }
-	// const userId = queryResultUser.rows[0].id;
-	// const queryResultPassword = await pool.query("SELECT id FROM users WHERE password = crypt($1, password) AND id = $2;", [password, userId]);
-	// if(queryResultPassword.rowCount === 0) {
-	//     return res.status(401).json({message: "Contrasena incorrecta"});
-	// }
-	// c.String(http.StatusOK, "logged in")
+// SignUp function
+func SignUp(c *gin.Context) {
+	//we open the database
+	db, errA := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	if errA != nil {
+		fmt.Println("error opening db")
+	}
+	//closing connection
+	defer db.Close()
+
+	//decoding body
+	var bodyUser User
+
+	errB := c.BindJSON(&bodyUser)
+	if errB != nil {
+		fmt.Println("error binding body")
+	}
+
+	//creating the statement
+	sqlStatement := `INSERT INTO users (email, name, surname, password)
+	VALUES ($1, $2, $3, crypt($4, gen_salt('bf'))) RETURNING id;`
+
+	// TODO autoincremental
+	var newID = 0
+
+	//Querying
+	errC := db.QueryRow(sqlStatement, bodyUser.Email, bodyUser.Name, bodyUser.Surname, bodyUser.Password).Scan(&newID)
+	if errC != nil {
+		fmt.Println(errC.Error())
+	}
+
+	bodyUser.ID = newID
+
+	c.JSON(http.StatusOK, bodyUser)
 }
 
 // PostUsersRoot function
